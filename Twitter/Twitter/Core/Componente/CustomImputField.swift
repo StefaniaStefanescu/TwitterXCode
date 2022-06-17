@@ -10,6 +10,7 @@ import SwiftUI
 struct CustomImputField: View {
     let image: String
     let placeholderText: String
+    var isSecureField: Bool? = false
     @Binding var text: String
     var body: some View {
         VStack{
@@ -20,7 +21,11 @@ struct CustomImputField: View {
                     .frame(width: 20, height: 20)
                     .foregroundColor(Color(.darkGray))
                 
-                TextField(placeholderText, text: $text)
+                if isSecureField ?? false {
+                    SecureField (placeholderText, text: $text)
+                } else {
+                    TextField(placeholderText, text: $text)
+                }
             
             }
             Divider()
@@ -31,6 +36,7 @@ struct CustomImputField: View {
 
 struct CustomImputField_Previews: PreviewProvider {
     static var previews: some View {
-        CustomImputField(image: "envelope", placeholderText: "Email", text: .constant(""))
+       // CustomImputField(image: "envelope", placeholderText: "Email", isSecureField: false, text: .constant(""))
+        CustomImputField(image: "envelope" , placeholderText: "Email", isSecureField: false ,text: .constant(""))
     }
 }
