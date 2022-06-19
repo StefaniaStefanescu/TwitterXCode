@@ -6,49 +6,57 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct SideMenuView: View {
+    @EnvironmentObject var authviewModel: AuthViewModel
     var body: some View {
-        VStack(alignment: .leading, spacing: 32){
-                VStack(alignment: .leading) {
-                    Circle()
-                        .frame(width: 48, height: 48)
-                    VStack(alignment: .leading,spacing: 4){
-                        Text("Nia Stefanescu")
-                            .font(.headline)
-                        Text("@nia")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+        
+        if let user = authviewModel.currentUser {
+            VStack(alignment: .leading, spacing: 32){
+                    VStack(alignment: .leading) {
+                        KFImage(URL(string: user.profileImageUrl))
+                            .resizable()
+                            .scaledToFill()
+                            .clipShape(Circle())
+                            .frame(width: 48, height: 48)
+                        VStack(alignment: .leading,spacing: 4){
+                            Text(user.fullname)
+                                .font(.headline)
+                            Text("@\(user.username)")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        UserStatsView()
+                            .padding(.vertical)
                     }
-                    UserStatsView()
-                        .padding(.vertical)
-                }
-                .padding(.leading)
-            
-            //profile opt list
-            ForEach(SideMenuViewModel.allCases, id: \.rawValue){
-                viewModel in
-                if viewModel == .profile {
-                    NavigationLink {
-                        ProfileView()
-                    } label: {
-                        SideMOptionRowView(viewModel: viewModel)
-                    }
-                } else if viewModel == .logout {
-                    Button {
-                        print("Trebuie facut logout-ul")
-                    } label:{
-                        SideMOptionRowView(viewModel: viewModel)
-                    }
-                }else {
-                    SideMOptionRowView(viewModel: viewModel)
-                }
-            
+                    .padding(.leading)
                 
+                //profile opt list
+                ForEach(SideMenuViewModel.allCases, id: \.rawValue){
+                    viewModel in
+                    if viewModel == .profile {
+                        NavigationLink {
+                            ProfileView(user: user)
+                        } label: {
+                            SideMOptionRowView(viewModel: viewModel)
+                        }
+                    } else if viewModel == .logout {
+                        Button {
+                            authviewModel.signOut()
+                        } label:{
+                            SideMOptionRowView(viewModel: viewModel)
+                        }
+                    }else {
+                        SideMOptionRowView(viewModel: viewModel)
+                    }
+                
+                    
+                }
+                //.padding(.vertical,4)
+                
+                Spacer()
             }
-            //.padding(.vertical,4)
-            
-            Spacer()
         }
         
     }
